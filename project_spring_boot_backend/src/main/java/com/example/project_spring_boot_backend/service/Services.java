@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -41,8 +42,8 @@ public class Services {
         return contactRepo.save(contact);
     }
 
-    public void deleteContact(Contact contact) {
-        // I need to implement this method
+    public void deleteContact(String id) {
+        contactRepo.deleteById(id);
     }
     public String uploadPhoto(String id, MultipartFile file) {
         log.info("Saving picture for user ID: {}", id);
