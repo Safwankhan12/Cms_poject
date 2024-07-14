@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from './components/Header'
-import ContactList from './components/ContactList'
+import Header from './components/Header';
+import ContactList from './components/ContactList';
 import { getContacts, saveContact, udpatePhoto } from './api/ContactService';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ContactDetail from './components/ContactDetail';
 import { toastError } from './api/ToastService';
 import { ToastContainer } from 'react-toastify';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   const modalRef = useRef();
@@ -22,6 +25,8 @@ function App() {
     title: '',
     status: '',
   });
+
+  const location = useLocation();
 
   const getAllContacts = async (page = 0, size = 10) => {
     try {
@@ -57,7 +62,7 @@ function App() {
         address: '',
         title: '',
         status: '',
-      })
+      });
       getAllContacts();
     } catch (error) {
       console.log(error);
@@ -84,7 +89,7 @@ function App() {
     }
   };
 
-  const toggleModal = show => show ? modalRef.current.showModal() : modalRef.current.close();
+  const toggleModal = (show) => (show ? modalRef.current.showModal() : modalRef.current.close());
 
   useEffect(() => {
     getAllContacts();
@@ -92,18 +97,21 @@ function App() {
 
   return (
     <>
-      <Header toggleModal={toggleModal} nbOfContacts={data.totalElements} />
-      <main className='main'>
-        <div className='container'>
+      {location.pathname !== '/login' && location.pathname !== '/register' && (
+        <Header toggleModal={toggleModal} nbOfContacts={data.totalElements} />
+      )}
+      <main className="main">
+        <div className="container">
           <Routes>
-            <Route path='/' element={<Navigate to={'/contacts'} />} />
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/contacts" element={<ContactList data={data} currentPage={currentPage} getAllContacts={getAllContacts} />} />
             <Route path="/contacts/:id" element={<ContactDetail updateContact={updateContact} updateImage={updateImage} />} />
           </Routes>
         </div>
       </main>
 
-      {/* Modal */}
       <dialog ref={modalRef} className="modal" id="modal">
         <div className="modal__header">
           <h3>New Contact</h3>
@@ -115,36 +123,36 @@ function App() {
             <div className="user-details">
               <div className="input-box">
                 <span className="details">Name</span>
-                <input type="text" value={values.name} onChange={onChange} name='name' required />
+                <input type="text" value={values.name} onChange={onChange} name="name" required />
               </div>
               <div className="input-box">
                 <span className="details">Email</span>
-                <input type="text" value={values.email} onChange={onChange} name='email' required />
+                <input type="text" value={values.email} onChange={onChange} name="email" required />
               </div>
               <div className="input-box">
                 <span className="details">Title</span>
-                <input type="text" value={values.title} onChange={onChange} name='title' required />
+                <input type="text" value={values.title} onChange={onChange} name="title" required />
               </div>
               <div className="input-box">
                 <span className="details">Phone Number</span>
-                <input type="text" value={values.phone} onChange={onChange} name='phone' required />
+                <input type="text" value={values.phone} onChange={onChange} name="phone" required />
               </div>
               <div className="input-box">
                 <span className="details">Address</span>
-                <input type="text" value={values.address} onChange={onChange} name='address' required />
+                <input type="text" value={values.address} onChange={onChange} name="address" required />
               </div>
               <div className="input-box">
                 <span className="details">Account Status</span>
-                <input type="text" value={values.status} onChange={onChange} name='status' required />
+                <input type="text" value={values.status} onChange={onChange} name="status" required />
               </div>
               <div className="file-input">
                 <span className="details">Profile Photo</span>
-                <input type="file" onChange={(event) => setFile(event.target.files[0])} ref={fileRef} name='photo' required />
+                <input type="file" onChange={(event) => setFile(event.target.files[0])} ref={fileRef} name="photo" required />
               </div>
             </div>
             <div className="form_footer">
-              <button onClick={() => toggleModal(false)} type='button' className="btn btn-danger">Cancel</button>
-              <button type='submit' className="btn">Save</button>
+              <button onClick={() => toggleModal(false)} type="button" className="btn btn-danger">Cancel</button>
+              <button type="submit" className="btn">Save</button>
             </div>
           </form>
         </div>
