@@ -38,12 +38,12 @@ public class Api {
         return ResponseEntity.ok(savedContact);
     }
     //updating contact for user
-    @PutMapping("/users/contacts/{id}")
-    public ResponseEntity<Contact> updateContactForUser(@PathVariable String id, @RequestBody Contact updatedContact, Principal principal) {
-        Long userId = Long.parseLong(principal.getName()); // Assuming the user ID is the principal name
+    @PutMapping("/users/{userId}/contacts/{id}")
+    public ResponseEntity<Contact> updateContactForUser(@PathVariable Long userId, @PathVariable String id, @RequestBody Contact updatedContact) {
         Contact contact = contactService.updateContactForUser(id, userId, updatedContact);
         return ResponseEntity.ok(contact);
     }
+
 
     @GetMapping
     public ResponseEntity<Page<Contact>> getContacts(@RequestParam(value = "page", defaultValue = "0") int page,
@@ -65,25 +65,25 @@ public class Api {
     public byte[] getPhoto(@PathVariable("filename") String filename) throws IOException {
         return Files.readAllBytes(Paths.get(PHOTO_DIRECTORY + filename));
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteContact(@PathVariable(value = "id") String id) {
-        contactService.deleteContact(id);
+    @DeleteMapping("/users/{userId}/contacts/{id}")
+    public ResponseEntity<Void> deleteContactForUser(@PathVariable Long userId, @PathVariable String id) {
+        contactService.deleteContactForUser(id, userId);
         return ResponseEntity.noContent().build();
     }
+
     //saaray contacts user kay liye
-    @GetMapping("/users/contacts")
-    public ResponseEntity<List<Contact>> getAllContactsForUser(Principal principal) {
-        Long userId = Long.parseLong(principal.getName()); // Assuming the user ID is the principal name
+    @GetMapping("/users/{userId}/contacts")
+    public ResponseEntity<List<Contact>> getAllContactsForUser(@PathVariable Long userId) {
         List<Contact> contacts = contactService.getContactsByUserId(userId);
         return ResponseEntity.ok(contacts);
     }
-//individual contact for user
-    @GetMapping("/users/contacts/{id}")
-    public ResponseEntity<Contact> getContactForUser(@PathVariable String id, Principal principal) {
-        Long userId = Long.parseLong(principal.getName()); // Assuming the user ID is the principal name
+
+    //individual contact for user
+    @GetMapping("/users/{userId}/contacts/{id}")
+    public ResponseEntity<Contact> getContactForUser(@PathVariable Long userId, @PathVariable String id) {
         Contact contact = contactService.getContactForUser(id, userId);
         return ResponseEntity.ok(contact);
     }
+
 
 }

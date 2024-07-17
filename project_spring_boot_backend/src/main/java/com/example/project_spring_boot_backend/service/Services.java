@@ -29,6 +29,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @RequiredArgsConstructor
 public class Services {
     private final Repo contactRepo;
+    public void deleteContactForUser(String id, Long userId) {
+        Contact contact = getContactForUser(id, userId);
+        contactRepo.delete(contact);
+    }
 
     public Page<Contact> getAllContacts(int page, int size) {
         return contactRepo.findAll(PageRequest.of(page, size, Sort.by("name")));
