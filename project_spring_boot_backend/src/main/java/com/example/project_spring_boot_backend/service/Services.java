@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -56,6 +57,29 @@ public class Services {
         contact.setPhotoUrl(photoUrl);
         contactRepo.save(contact);
         return photoUrl;
+    }
+    // In your Services.java class
+
+    public List<Contact> getContactsByUserId(Long userId) {
+        return contactRepo.findByUser_UserId(userId);
+    }
+
+    public Contact getContactForUser(String contactId, Long userId) {
+        return contactRepo.findByIdAndUserUserId(contactId, userId)
+                .orElseThrow(() -> new RuntimeException("Contact not found or does not belong to the user"));
+    }
+    public Contact updateContactForUser(String contactId, Long userId, Contact updatedContact) {
+        Contact contact = contactRepo.findByIdAndUserUserId(contactId, userId)
+                .orElseThrow(() -> new RuntimeException("Contact not found or does not belong to the user"));
+        // here we need to update the contact with the new values
+        contact.setName(updatedContact.getName());
+        contact.setEmail(updatedContact.getEmail());
+        contact.setTitle(updatedContact.getTitle());
+        contact.setPhone(updatedContact.getPhone());
+        contact.setAddress(updatedContact.getAddress());
+        contact.setStatus(updatedContact.getStatus());
+        contact.setPhotoUrl(updatedContact.getPhotoUrl());
+        return contactRepo.save(contact);
     }
 
     private final Function<String, String> fileExtension = filename -> Optional.of(filename)
